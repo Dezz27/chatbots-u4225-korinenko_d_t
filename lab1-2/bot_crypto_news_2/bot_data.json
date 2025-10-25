@@ -1,0 +1,48 @@
+{
+  "123456789": {
+    "topics": [],
+    "keywords": [],
+    "digest_enabled": false,
+    "digest_time": "09:00",
+    "digest_frequency": "daily",
+    "sources": [
+      "rss"
+    ],
+    "language": "ru",
+    "region": "ru",
+    "created_at": "2025-10-24T19:10:05.338515"
+  },
+  "443751741": {
+    "topics": [
+      "Инвестиции",
+      "технологии",
+      "ключевая ставка"
+    ],
+    "keywords": [],
+    "digest_enabled": false,
+    "digest_time": "09:00",
+    "digest_frequency": "daily",
+    "sources": [
+      "rss",
+      "telegram"
+    ],
+    "language": "ru",
+    "region": "ru",
+    "created_at": "2025-10-24T19:15:58.005520",
+    "saved": [
+      {
+        "source": {
+          "id": null,
+          "name": "Spaceflight Now"
+        },
+        "author": null,
+        "title": "SpaceX expends Falcon 9 booster to launch Spainsat NG 2 communications satellite - Spaceflight Now",
+        "description": null,
+        "url": "https://spaceflightnow.com/2025/10/23/live-coverage-spacex-to-expend-falcon-9-booster-to-launch-spainsat-ng-2-communications-satellite/",
+        "urlToImage": null,
+        "publishedAt": "2025-10-24T02:30:53Z",
+        "content": "SpaceX’s Falcon 9 rocket streaks across the sky on the SpainSat NG-2 mission for Hisdesat as seen from St. Cloud, Florida. Image: Michael Cain / Spaceflight Now\r\nUpdate Oct. 23, 10:25 p.m. EDT (0225 … [+3887 chars]"
+      }
+    ]
+  }
+}
