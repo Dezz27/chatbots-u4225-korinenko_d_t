@@ -20,7 +20,7 @@ class NewsFetcher:
     
     def __init__(self):
         """Инициализация с настройками из переменных окружения"""
-        self.news_api_key = os.getenv('NEWS_API_KEY')
+        self.news_api_key = os.getenv('NEWSAPI_KEY')
         self.mediastack_api_key = os.getenv('MEDIASTACK_API_KEY')
         self.http_timeout = int(os.getenv('HTTP_TIMEOUT', 30))
         
