@@ -261,22 +261,33 @@ class NewsAggregatorBot:
         """Обработчик команды /help"""
         help_text = (
             "📋 Список команд:\n\n"
-            "📊 /top - показать топ новостей за день\n"
-            "📧 /digest - включить/выключить ежедневный дайджест\n"
-            "⏰ /time - задать время отправки дайджеста\n"
-            "📅 /freq - выбрать частоту дайджеста\n"
-            "📡 /sources - выбрать источники новостей\n"
-            "🌐 /lang - выбрать язык новостей\n"
-            "🌍 /region - задать географический регион\n"
-            "📝 /list - показать список всех тем\n"
-            "🗑️ /remove - удалить тему\n"
-            "✏️ /rename - переименовать тему\n"
-            "ℹ️ /about - информация о боте\n\n"
+            "🚀 /start — запуск и приветствие\n"
+            "📋 /help — эта справка\n"
+            "🗞️ /news — топ-5 новостей по теме: /news <тема>\n"
+            "🔎 /search — поиск по сохранённым темам: /search <слова>\n"
+            "🧩 /topic — управление темами: add | list | remove | rename\n"
+            "📝 /list — показать список всех тем\n"
+            "💾 /save — сохранить новость: /save <номер|url> (из последней выдачи)\n"
+            "📚 /saved — показать сохранённые материалы\n"
+            "📊 /top — показать топ новостей за день\n"
+            "💱 /crypto_usdt — курс USDT (Tether) с 24h change\n"
+            "📧 /digest — включить/выключить ежедневный дайджест\n"
+            "⏰ /time — задать время отправки дайджеста\n"
+            "📅 /freq — выбрать частоту дайджеста (daily | weekly | weekdays)\n"
+            "📡 /sources — выбрать источники новостей\n"
+            "🌐 /lang — выбрать язык новостей (ru/en/…)\n"
+            "🌍 /region — задать географический регион (ru/us/de/…)\n"
+            "ℹ️ /about — информация о боте\n\n"
             "Примеры использования:\n"
-            "• /time 09:30 - установить время дайджеста на 9:30\n"
-            "• /freq weekly - получать дайджест еженедельно\n"
-            "• /lang en - переключиться на английский язык"
+            "• /news bitcoin — показать свежие новости про Bitcoin\n"
+            "• /topic add ИИ — добавить тему «ИИ»\n"
+            "• /save 3 — сохранить новость №3 из последней выдачи\n"
+            "• /time 09:30 — установить время дайджеста на 09:30\n"
+            "• /freq weekly — получать дайджест еженедельно\n"
+            "• /lang en — переключиться на английский язык\n"
+            "• /crypto_usdt — получить текущий курс USDT\n"
         )
+
         
         await self._safe_reply(update,help_text)
     
@@ -447,15 +458,40 @@ class NewsAggregatorBot:
         if not topics:
             await self._safe_reply(update, "Сначала добавь темы: /topic <название>")
             return
-        all_news = await self.news_fetcher.fetch(
-            feeds=user_data.get('sources', ['rss']),
-            language=user_data.get('language', 'ru'),
-            region=user_data.get('region', 'ru'),
-            limit=200
-        )
+        
+                # Собираем новости из выбранных источников (без топик-фильтра на этом шаге)
+        lang = user_data.get('language', 'ru')
+        region = user_data.get('region', 'ru')
+        sources = user_data.get('sources', ['rss'])
+
+        all_news = []
+
+        if 'rss' in sources:
+            # Подними лимит, чтобы /search нашёл больше совпадений
+            all_news.extend(self.news_fetcher.fetch_rss_news(lang, 50))
+
+        if 'api' in sources:
+            all_news.extend(self.news_fetcher.fetch_api_news(lang, region, 50))
+            all_news.extend(self.news_fetcher.fetch_mediastack_news(lang, region, 50))
+
+        # Дедуп перед тематической фильтрацией
+        all_news = self.news_filter.remove_duplicates(all_news)
+        logger.info(all_news)
+
         if not all_news:
             await self._safe_reply(update, "Пока не удалось получить новости из источников.")
             return
+
+
+        # all_news = await self.news_fetcher.fetch(
+        #     feeds=user_data.get('sources', ['rss']),
+        #     language=user_data.get('language', 'ru'),
+        #     region=user_data.get('region', 'ru'),
+        #     limit=200
+        # )
+        # if not all_news:
+        #     await self._safe_reply(update, "Пока не удалось получить новости из источников.")
+        #     return
         groups = []
         for t in topics:
             filtered = self.news_filter.filter_news(all_news, keywords=[t])
@@ -513,8 +549,9 @@ class NewsAggregatorBot:
         import os, requests
         api_key = os.getenv("COINGECKO_API_KEY")  # опционально
         if api_key:
-            url = "https://pro-api.coingecko.com/api/v3/simple/price"
-            headers = {"x-cg-pro-api-key": api_key}
+            logger.info("API key exists")
+            url = "https://api.coingecko.com/api/v3/simple/price"
+            headers = {"x-cg-demo-api-key": api_key}
         else:
             url = "https://api.coingecko.com/api/v3/simple/price"
             headers = {}

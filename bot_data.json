@@ -1,0 +1,35 @@
+{
+  "443751741": {
+    "topics": [
+      "ChatGPT",
+      "нейросети",
+      "Telegram",
+      "Ключевая ставка"
+    ],
+    "keywords": [],
+    "digest_enabled": false,
+    "digest_time": "09:00",
+    "digest_frequency": "daily",
+    "sources": [
+      "rss"
+    ],
+    "language": "ru",
+    "region": "ru",
+    "created_at": "2025-10-31T20:07:42.145314",
+    "saved": [
+      {
+        "source": {
+          "id": "the-verge",
+          "name": "The Verge"
+        },
+        "author": "Emma Roth",
+        "title": "Sam Altman says ChatGPT will soon sext with verified adults",
+        "description": "OpenAI will soon allow “erotica” for ChatGPT users who verify their age on the platform. In an X post on Tuesday, OpenAI CEO Sam Altman said the company will add support for mature conversations when it launches age-gating in December. “As we roll out age-gat…",
+        "url": "https://www.theverge.com/news/799312/openai-chatgpt-erotica-sam-altman-verified-adults",
+        "urlToImage": "https://platform.theverge.com/wp-content/uploads/sites/2/2025/02/STK_414_AI_CHATBOT_R2_CVirginia_B.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200",
+        "publishedAt": "2025-10-14T17:45:34Z",
+        "content": "<ul><li></li><li></li><li></li></ul>\r\nOpenAI will bring erotica to ChatGPT once it rolls out age verification in December.\r\nOpenAI will bring erotica to ChatGPT once it rolls out age verification in … [+2931 chars]"
+      }
+    ]
+  }
+}
