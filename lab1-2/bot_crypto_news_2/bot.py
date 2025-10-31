@@ -30,10 +30,38 @@ from telegram.error import TimedOut
 # Загружаем переменные окружения
 load_dotenv()
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
+def setup_logging():
+    level_name = os.getenv("LOG_LEVEL", "INFO").upper()
+    level = getattr(logging, level_name, logging.INFO)
+
+    root = logging.getLogger()
+    # убрать любые преднастроенные хендлеры, чтобы не было дублей
+    for h in list(root.handlers):
+        root.removeHandler(h)
+
+    fmt = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+
+    # INFO и ниже -> stdout
+    h_out = logging.StreamHandler(sys.stdout)
+    h_out.setLevel(level)
+    h_out.setFormatter(fmt)
+
+    # WARNING и выше -> stderr
+    h_err = logging.StreamHandler(sys.stderr)
+    h_err.setLevel(logging.WARNING)
+    h_err.setFormatter(fmt)
+
+    root.setLevel(level)
+    root.addHandler(h_out)
+    root.addHandler(h_err)
+
+    # приглушаем болтливые библиотеки
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    # logging.getLogger("telegram").setLevel(logging.INFO)  # или WARNING при необходимости
+
+setup_logging()
+
+# твой модульный логгер — после setup_logging()
 logger = logging.getLogger(__name__)
 
 class NewsAggregatorBot:
