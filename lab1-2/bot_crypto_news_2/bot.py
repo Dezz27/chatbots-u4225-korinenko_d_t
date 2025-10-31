@@ -7,6 +7,7 @@ Telegram News Aggregator Bot
 import os
 import json
 import logging
+import sys
 import asyncio
 from datetime import datetime, time, timedelta
 import re
@@ -29,11 +30,34 @@ from telegram.error import TimedOut
 # Загружаем переменные окружения
 load_dotenv()
 
+# Сбрасываем автохендлеры basicConfig
+root = logging.getLogger()
+for h in list(root.handlers):
+    root.removeHandler(h)
+
+# Общий формат
+fmt = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# INFO и ниже → stdout
+h_out = logging.StreamHandler(sys.stdout)
+h_out.setLevel(logging.INFO)
+h_out.setFormatter(fmt)
+
+# WARNING и выше → stderr
+h_err = logging.StreamHandler(sys.stderr)
+h_err.setLevel(logging.WARNING)
+h_err.setFormatter(fmt)
+
+root.setLevel(logging.INFO)
+root.addHandler(h_out)
+root.addHandler(h_err)
+
+
 # Настройка логирования
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
+# logging.basicConfig(
+#     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+#     level=logging.INFO
+# )
 logger = logging.getLogger(__name__)
 
 class NewsAggregatorBot:

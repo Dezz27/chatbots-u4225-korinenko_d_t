@@ -1,14 +1,14 @@
-University: [ITMO University](https://itmo.ru/ru/)
-Faculty: [FTMI](https://ftmi.itmo.ru/)
-Course: [Vibe Coding: AI-боты для бизнеса](https://github.com/itmo-ict-faculty/vibe-coding-for-business)
-Year: 2025/2026
-Group: U4225
-Author: Korinenko Daniil Trofimovich
-Lab: Lab1-2
-Date of create: 24.10.2025
-Date of finished: \\
+University: [ITMO University](https://itmo.ru/ru/) \
+Faculty: [FTMI](https://ftmi.itmo.ru/) \
+Course: [Vibe Coding: AI-боты для бизнеса](https://github.com/itmo-ict-faculty/vibe-coding-for-business) \
+Year: 2025/2026 \
+Group: U4225 \
+Author: Korinenko Daniil Trofimovich \
+Lab: Lab1-2 \
+Date of create: 24.10.2025 \
+Date of finished: 31.10.2025
 
-## Лабораторная №1
+## Лабораторная №1-2
 
 ### Бот-агрегатор информации
 
@@ -65,7 +65,6 @@ Date of finished: \\
 **Создай:**
 
 1. **Файл bot.py** с кодом бота, включая:
-
    * Класс NewsAggregatorBot с методами для команд и обработчиков
    * Загрузку и сохранение данных пользователей
    * Обработчики команд и callback-запросов от инлайн-кнопок
@@ -82,24 +81,24 @@ Date of finished: \\
 
 ### Шаги решения
 
-1. Зарегистрировал бота
+1. Зарегистрировал бота: <br >
    ![1761929261642](image/lab1-2_report/1761929261642.png)
 2. Внешний вид созданного проекта: ![1761929355626](image/lab1-2_report/1761929355626.png)
-3. Запуск бота с логами: ![1761929413338](image/lab1-2_report/1761929413338.png)
+3. Запуск бота с логами:<br > ![1761929413338](image/lab1-2_report/1761929413338.png)
 
-4. Команда `/help`
+4. Команда `/help` <br >
    ![1761930446540](image/lab1-2_report/1761930446540.png)
-5. Добавление темы
+5. Добавление темы<br >
    ![1761930522053](image/lab1-2_report/1761930522053.png)
-6. Команда `/top` — топ новостей за день
+6. Команда `/top` — топ новостей за день<br >
    ![1761930681397](image/lab1-2_report/1761930681397.png)
-7. Собирает новости по темам с командой `/news` (использует NewsAPI)
+7. Собирает новости по темам с командой `/news` (использует NewsAPI)<br >
    ![1761930932907](image/lab1-2_report/1761930932907.png)
-8. Сохранение новостей и их просмотр с командами `/save` и `/saved`:
+8. Сохранение новостей и их просмотр с командами `/save` и `/saved`:<br >
    ![1761931019293](image/lab1-2_report/1761931019293.png)
-9. Поиск по сохраненным темам с `/search`
+9.  Поиск по сохраненным темам с `/search`<br >
    ![1761931188120](image/lab1-2_report/1761931188120.png)
-10. Получение курса криптовалют с командой `/crypto_usdt`
+10. Получение курса криптовалют с командой `/crypto_usdt`<br >
     ![1761931352581](image/lab1-2_report/1761931352581.png)
 
 ### Трудности и решения
