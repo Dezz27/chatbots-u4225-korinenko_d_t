@@ -286,38 +286,41 @@ class NewsAggregatorBot:
         await self._safe_reply(update,welcome_message)
     
     async def help_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        """Обработчик команды /help"""
-        help_text = (
-            "📋 Список команд:\n\n"
-            "🚀 /start — запуск и приветствие\n"
-            "📋 /help — эта справка\n"
-            "🗞️ /news — топ-5 новостей по теме: /news <тема>\n"
-            "🔎 /search — поиск по сохранённым темам: /search <слова>\n"
-            "🧩 /topic — управление темами: add | list | remove | rename\n"
-            "📝 /list — показать список всех тем\n"
-            "💾 /save — сохранить новость: /save <номер|url> (из последней выдачи)\n"
-            "📚 /saved — показать сохранённые материалы\n"
-            "📊 /top — показать топ новостей за день\n"
-            "💱 /crypto_usdt — курс USDT (Tether) с 24h change\n"
-            "📧 /digest — включить/выключить ежедневный дайджест\n"
-            "⏰ /time — задать время отправки дайджеста\n"
-            "📅 /freq — выбрать частоту дайджеста (daily | weekly | weekdays)\n"
-            "📡 /sources — выбрать источники новостей\n"
-            "🌐 /lang — выбрать язык новостей (ru/en/…)\n"
-            "🌍 /region — задать географический регион (ru/us/de/…)\n"
-            "ℹ️ /about — информация о боте\n\n"
-            "Примеры использования:\n"
-            "• /news bitcoin — показать свежие новости про Bitcoin\n"
-            "• /topic add ИИ — добавить тему «ИИ»\n"
-            "• /save 3 — сохранить новость №3 из последней выдачи\n"
-            "• /time 09:30 — установить время дайджеста на 09:30\n"
-            "• /freq weekly — получать дайджест еженедельно\n"
-            "• /lang en — переключиться на английский язык\n"
-            "• /crypto_usdt — получить текущий курс USDT\n"
-        )
+        text = (
+            "<b>🔰 Базовые</b>\n"
+            "• /start — запуск\n"
+            "• /help — помощь\n"
+            "• /about — о боте\n\n"
 
-        
-        await self._safe_reply(update,help_text)
+            "<b>🔎 Поиск и темы</b>\n"
+            "• /news &lt;тема&gt; [ru|us|…] — свежие новости по теме\n"
+            "• /search &lt;слова&gt; — поиск по сохранённым темам\n"
+            "• /topic add|list|remove|rename — управление темами\n"
+            "• /list — показать темы\n"
+            "• /save &lt;N|url&gt; — сохранить материал\n"
+            "• /saved — сохранённые материалы\n\n"
+
+            "<b>📧 Дайджест</b>\n"
+            "• /digest — статус + быстрые кнопки\n"
+            "• /time HH:MM — время отправки (локаль пользователя)\n"
+            "• /freq daily|weekly|weekdays — частота\n\n"
+
+            "<b>⚙️ Настройки</b>\n"
+            "• /sources — выбрать источники (RSS/API/…)\n"
+            "• /lang ru|en|de|… — язык\n"
+            "• /region ru|us|de|… — регион\n\n"
+
+            "<b>💱 Разное</b>\n"
+            "• /crypto_usdt — курс USDT\n\n"
+
+            "<b>Примеры</b>\n"
+            "• /news искусственный интеллект us\n"
+            "• /topic add Машинное обучение\n"
+            "• /time 09:30\n"
+            "• /freq weekdays\n"
+        )
+        await self._safe_reply(update, text, parse_mode="HTML")
+
     
     
     async def topic_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -655,7 +658,18 @@ class NewsAggregatorBot:
                 src   = (a.get("source") or {}).get("name") or ""
                 date  = a.get("publishedAt") or ""
                 lines.append(f"{i}. {title}\n{url}\n{date} • {src}")
-            await self._safe_reply(update, "📰 Топ-5 новостей (NewsAPI):\n\n" + "\n\n".join(lines))
+
+            buttons = []
+            for a in articles[:5]:
+                url = a.get("url") or ""
+                if url:
+                    buttons.append([InlineKeyboardButton("💾 Сохранить", callback_data=f"save|{url}")])
+
+            await self._safe_reply(
+                update,
+                "📰 Топ-5 новостей (NewsAPI):\n\n" + "\n\n".join(lines),
+                reply_markup=InlineKeyboardMarkup(buttons) if buttons else None
+            )
         except Exception as e:
             logger.exception("Ошибка в /news: %s", e)
             await self._safe_reply(update, "Ошибка при запросе новостей.")
@@ -703,30 +717,24 @@ class NewsAggregatorBot:
             await self._safe_reply(update,"❌ Произошла ошибка при получении новостей. Попробуйте позже.")
     
     async def digest_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        """Обработчик команды /digest - управление дайджестом"""
         user_id = update.effective_user.id
         user_data = self.get_user_data(user_id)
-        
-        # Создаем клавиатуру для переключения дайджеста
+        status_btn = "✅ Включить" if not user_data['digest_enabled'] else "❌ Выключить"
         keyboard = [
+            [InlineKeyboardButton(status_btn, callback_data=f"toggle_digest_{user_id}")],
             [
-                InlineKeyboardButton(
-                    "✅ Включить" if not user_data['digest_enabled'] else "❌ Выключить",
-                    callback_data=f"toggle_digest_{user_id}"
-                )
+                InlineKeyboardButton("⏰ Время", callback_data=f"open_time_{user_id}"),
+                InlineKeyboardButton("📅 Частота", callback_data=f"open_freq_{user_id}")
             ]
         ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        
-        status_text = "включен" if user_data['digest_enabled'] else "выключен"
-        message = (
-            f"📧 Статус дайджеста: {status_text}\n\n"
-            f"⏰ Время отправки: {user_data['digest_time']}\n"
+        msg = (
+            f"📧 Дайджест: {'включен' if user_data['digest_enabled'] else 'выключен'}\n"
+            f"⏰ Время: {user_data['digest_time']}\n"
             f"📅 Частота: {user_data['digest_frequency']}\n\n"
-            "Нажмите кнопку для изменения статуса:"
+            "Управление ниже:"
         )
-        
-        await self._safe_reply(update,message, reply_markup=reply_markup)
+        await self._safe_reply(update, msg, reply_markup=InlineKeyboardMarkup(keyboard))
+
     
     async def time_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Обработчик команды /time - установка времени дайджеста"""
@@ -1017,6 +1025,27 @@ class NewsAggregatorBot:
                 region = data.split('_')[2]
                 self.update_user_data(user_id, {'region': region})
                 await query.edit_message_text(f"🌍 Регион установлен: {region.upper()}")
+
+            elif data.startswith("open_time_"):
+                times = ["08:00", "09:00", "18:00", "20:00"]
+                rows = [[InlineKeyboardButton(t, callback_data=f"set_time_{t}_{user_id}")] for t in times]
+                await query.edit_message_text("⏰ Выберите время для дайджеста:", reply_markup=InlineKeyboardMarkup(rows))
+
+            elif data.startswith("set_time_"):
+                # формат: set_time_HH:MM_userid
+                parts = data.split("_")
+                t = parts[2]
+                self.update_user_data(user_id, {"digest_time": t})
+                await query.edit_message_text(f"✅ Время дайджеста установлено на {t}")
+
+            elif data.startswith("open_freq_"):
+                rows = [
+                    [InlineKeyboardButton("📅 Ежедневно", callback_data=f"freq_daily_{user_id}")],
+                    [InlineKeyboardButton("📆 Еженедельно", callback_data=f"freq_weekly_{user_id}")],
+                    [InlineKeyboardButton("💼 По будням", callback_data=f"freq_weekdays_{user_id}")]
+                ]
+                await query.edit_message_text("📅 Выберите частоту:", reply_markup=InlineKeyboardMarkup(rows))
+
                 
         except Exception as e:
             logger.error(f"Ошибка обработки callback: {e}")
@@ -1076,27 +1105,28 @@ class NewsAggregatorBot:
             return []
     
     async def send_digest(self, user_id: int) -> None:
-        """Отправка дайджеста пользователю"""
         try:
             user_data = self.get_user_data(user_id)
-            if not user_data['digest_enabled']:
+            if not user_data.get('digest_enabled'):
                 return
-            
+
             news = await self.fetch_news(user_data)
-            context.user_data['last_news'] = news
-            
             if not news:
+                # Мягко молчим, чтобы не спамить пустым дайджестом
+                logger.info(f"Дайджест пуст для {user_id}")
                 return
-            
-            # Форматируем дайджест
+
+            # Тот же формат, что и обычный список новостей
             message = self.news_formatter.format_digest(news)
-            
-            # Здесь должен быть код отправки сообщения пользователю
-            # Для демонстрации просто логируем
-            logger.info(f"Отправка дайджеста пользователю {user_id}: {len(news)} новостей")
-            
+            await self.application.bot.send_message(
+                chat_id=user_id,
+                text=message,
+                disable_web_page_preview=False
+            )
+            logger.info(f"Отправлен дайджест пользователю {user_id}: {len(news)} новостей")
         except Exception as e:
             logger.error(f"Ошибка отправки дайджеста: {e}")
+
     
     
     async def error_handler(self, update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -1113,6 +1143,7 @@ class NewsAggregatorBot:
         # Создаем приложение
         request = HTTPXRequest(connect_timeout=20, read_timeout=20, write_timeout=20, pool_timeout=20)
         application = Application.builder().token(self.token).request(request).build()
+        self.application = application
         application.add_error_handler(self.error_handler)
 
         # Добавляем обработчики команд
@@ -1142,6 +1173,12 @@ class NewsAggregatorBot:
         
         # Запускаем планировщик дайджестов
         self.scheduler.start_scheduler()
+
+        for uid_str, udata in self.users_data.items():
+            try:
+                self.scheduler.schedule_user_digest(int(uid_str), udata)
+            except Exception as e:
+                logger.warning(f"Не удалось спланировать дайджест {uid_str}: {e}")
         
         # Запускаем бота
         logger.info("Запуск News Aggregator Bot...")
