@@ -1,12 +1,12 @@
-University: [ITMO University](https://itmo.ru/ru/)
-Faculty: [FTMI](https://ftmi.itmo.ru/)
-Course: [Vibe Coding: AI-боты для бизнеса](https://github.com/itmo-ict-faculty/vibe-coding-for-business)
-Year: 2025/2026
-Group: U4225
-Author: Korinenko Daniil Trofimovich
-Lab: Lab 3
-Date of create: 31.10.2025
-Date of finished: \\
+University: [ITMO University](https://itmo.ru/ru/) \
+Faculty: [FTMI](https://ftmi.itmo.ru/) \
+Course: [Vibe Coding: AI-боты для бизнеса](https://github.com/itmo-ict-faculty/vibe-coding-for-business) \
+Year: 2025/2026 \
+Group: U4225 \
+Author: Korinenko Daniil Trofimovich \
+Lab: Lab 3 \
+Date of create: 31.10.2025 \
+Date of finished: \
 
 ### Описание деплоя
 
@@ -27,16 +27,16 @@ Date of finished: \\
 2. Общие впечатления
 
    ![1762529424915](image/lab3_report/1762529424915.png)
-3. Непонятная функция
+3. Непонятная функция \
    ![1762529512447](image/lab3_report/1762529512447.png)
-4. Предложения по улучшению
+4. Предложения по улучшению \
    ![1762529543005](image/lab3_report/1762529543005.png)
-5. Обратная связь по использованию бота:
+5. Обратная связь по использованию бота: \
    ![1762529574699](image/lab3_report/1762529574699.png)
 
 ### Улучшения после обратной связи
 
-Добавили разграничение тем в `/help` и кнопки в настройке дайджеста 
+Добавили разграничение тем в `/help` и кнопки в настройке дайджеста \
 ![1762530828231](image/lab3_report/1762530828231.png)
 
 ### Выводы
